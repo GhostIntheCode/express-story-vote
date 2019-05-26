@@ -2,7 +2,7 @@ const express = require('express'),
   app = express(),
   port = process.env.PORT || 3000,
   // postRouter = require('./routes/posts'),
-  oauthRouter = require('./routes/oauth'),
+  oauthRouter = require('./routes/auth'),
   // mongoose = require('mongoose'),
   // bodyParser = require('body-parser'),
   passport = require('passport'),
@@ -51,6 +51,6 @@ app.get('/' , (req, res) => {
   res.send('working')  
 });
 // app.use('/api/posts', postRouter);
-app.use('/oauth', oauthRouter);
+app.use('/auth', oauthRouter);
 
 app.listen(port, () => console.log('server runing on port ' + port + ' ...'));
