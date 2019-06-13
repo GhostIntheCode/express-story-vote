@@ -10,6 +10,7 @@ module.exports = {
       status: req.body.status,
       creator: req.user.id
     };
+    if (!newStory.body) newStory.body = "to be writen soon...";
     if (!req.body.allowComments) {
       newStory.allowComments = false;
     }
@@ -41,19 +42,19 @@ module.exports = {
   },
   addComment: (req, res) => {
     Story.findOne({ _id: req.params.id }).then(story => {
-        const newComment = {
-            commentBody: req.body.commentBody,
-            commentCreator : req.user.id
-        }
-        // add to the begining of the array
-        story.comments.unshift(newComment);
+      const newComment = {
+        commentBody: req.body.commentBody,
+        commentCreator: req.user.id
+      };
+      // add to the begining of the array
+      story.comments.unshift(newComment);
 
-        story.save().then(story => {
-            res.redirect(`/stories/show/${story.id}`)
-        })
+      story.save().then(story => {
+        res.redirect(`/stories/show/${story.id}`);
+      });
     });
   },
-  deleteComment : () => {
-    // ! until improuving app 
+  deleteComment: () => {
+    // ! until improuving app
   }
 };
