@@ -1,0 +1,48 @@
+<br><br>
+<h1 class="header red-text">Register now</h1>
+<br><br>
+<div class="row">
+  <form class="col s12" action="" method="POST">
+    <div class="row">
+      <div class="input-field ">
+        <input type="text" name="name" class="validate" value="{{name}}" required />
+        <label for="name">Name</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field ">
+        <input type="email" name="email" class="validate" value="{{email}}" required />
+        <label for="email" data-error="wrong" data-success="right">Email</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field ">
+        <input type="password" name="password" class="validate" required />
+        <label for="Password">Password</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field ">
+        <input type="password" name="password" class="validate" required />
+        <label for="Password">Confirm Password</label>
+      </div>
+    </div>
+    <div class="row center-align">
+      <div class="input-field">
+        <button type="submit" class="waves-effect waves-light btn btn-block" style="width: 100%;">Register</button>
+      </div>
+    </div>
+  </form>
+  <div class="row center-align">
+    <div class="input-field col s6">
+      <a href="/auth/Oauth/google" class="btn waves-effect waves-light red">
+        <i class="fa fa-google" aria-hidden="true"></i>
+        Register with Google</a>
+    </div>
+    <div class="input-field col s6">
+      <a href="/auth/Oauth/facebook" class="btn waves-effect waves-light blue darken-3">
+        <i class="fa fa-facebook" aria-hidden="true"></i>
+        Register with Facebook</a>
+    </div>
+  </div>
+</div>

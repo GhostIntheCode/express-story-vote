@@ -1,0 +1,52 @@
+<br /><br />
+<h2>Your Stories</h2>
+<div class="row">
+  {{#if stories}}
+  <table class="striped">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th class="center-align">Comments Allowed</th>
+        <th class="center-align">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        {{#each stories}}
+        <td>
+          <a href="/stories/show/{{ id }}">{{ title }}</a>
+        </td>
+        <td>{{formatDate date 'MMMM, Do, YYYY'}}</td>
+        <td>{{ status }}</td>
+        <td class="center-align">
+          {{#if allowComments}}
+          <h5>
+            <i class="fa fa-toggle-on" aria-hidden="true"></i>
+          </h5>
+          {{else}}
+          <h5>
+            <i class="fa fa-toggle-off" aria-hidden="true"></i>
+          </h5>
+          {{/if}}
+        </td>
+        <td class="center-align">
+          <form method="POST" action="/stories/{{ id }}?_method=DELETE">
+            <a href="/stories/edit/{{ id }}" class="btn waves-effect waves-light">Edit</a>
+            <input type="hidden" name="_method" value="DELETE">
+            <button class="btn waves-effect waves-light red" type="submit" name="action">
+              delete
+            </button>
+          </form>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{else}}
+  <p>you have not yet created a story</p>
+  {{/if}}
+</div>
+<br /><br />

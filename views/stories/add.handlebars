@@ -1,0 +1,35 @@
+<h2>add a story</h2>
+
+<form action="" method="POST">
+  <div class="row">
+    <div class="input-field">
+      <input type="text" id="title" name="title" class="validate" />
+      <label for="title">Title</label>
+    </div>
+  </div>
+  <div class="row">
+    <select name="status">
+      <option value="private" selected>Private</option>
+      <option value="public">Public</option>
+      <option value="unpublished">Unpublished</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>
+      <input
+        name="allowComments"
+        type="checkbox"
+        class="filled-in"
+        checked="checked"
+      />
+      <span>Allow Comments</span>
+    </label>
+  </div>
+  <div class="row">
+    <h5 for="body" class="bold">What's On Your Mind</h5>
+    <textarea name="body" id="body" class="materialize-textarea"></textarea>
+  </div>
+  <div class="row">
+    <button href="#" type="Submit" class="waves-effect btn">Submit</button>
+  </div>
+</form>

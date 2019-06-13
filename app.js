@@ -1,56 +1,93 @@
-const express = require('express'),
+const express = require("express"),
   app = express(),
   port = process.env.PORT || 3000,
-  // postRouter = require('./routes/posts'),
-  oauthRouter = require('./routes/auth'),
-  // mongoose = require('mongoose'),
-  // bodyParser = require('body-parser'),
-  passport = require('passport'),
-  keys = require('./config/keys');
+  path = require("path"),
+  indexRouter = require("./routes"),
+  mongoose = require("mongoose"),
+  exphbs = require("express-handlebars"),
+  bodyParser = require("body-parser"),
+  methodOverride = require("method-override"),
+  flash = require("connect-flash"),
+  passport = require("passport"),
+  cookieParser = require("cookie-parser"),
+  session = require("express-session"),
+  keys = require("./config/keys");
+
+// helpers for exhbs
+const {
+  truncate,
+  stripTags,
+  formatDate,
+  select,
+  editIcon
+} = require("./helpers/hbs");
+
+// passport config
+require("./config/passportOauth")(passport);
 
 // Body parser middleware
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-// mongoose
-//   .connect(keys.mongoURI, { useNewUrlParser: true })
-//   .then(console.log(`Connected to cluster0-k3dow.mongodb.net`))
-//   .catch(err => console.log(err));
+// method override
+app.use(methodOverride("_method"));
 
-// Cors origin Access, Http methods and headers  
-// app.use((req, res, next) => {
-//   // Website you wish to allow to connect || * to allow all websites
-//   const allowedOrigins = ['http://localhost:4200', 'http://127.0.0.1:5500'];
-//   const origin = req.headers.origin;
-//   if (allowedOrigins.indexOf(origin) > -1) {
-//     res.setHeader('Access-Control-Allow-Origin', origin);
-//   }
-//   // Request methods you wish to allow
-//   res.setHeader(
-//     'Access-Control-Allow-Methods',
-//     'GET, POST, OPTIONS, PUT, PATCH, DELETE'
-//   );
-//   // Request headers you wish to allow
-//   res.setHeader(
-//     'Access-Control-Allow-Headers',
-//     'Origin,X-Requested-With,content-type,Accept,Authorization'
-//   );
-//   // Set to true if you need the website to include cookies in the requests sent
-//   // to the API (e.g. in case you use sessions)
-//   // res.setHeader('Access-Control-Allow-Credentials', true);
+mongoose
+  .connect(keys.mongoURI, { useNewUrlParser: true })
+  .then(console.log(`Connected to Atlas mongo cluster `))
+  .catch(err => console.log(err));
 
-//   // next() to pass control to the next middleware function 
-//   next();
-// });
+app.engine(
+  "handlebars",
+  exphbs({
+    helpers: {
+      truncate,
+      stripTags,
+      formatDate,
+      select,
+      editIcon
+    },
+    defaultLayout: "main"
+  })
+);
+app.set("view engine", "handlebars");
 
-// passport config 
-require('./config/passport')(passport)
+// static folder
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use(cookieParser());
+app.use(
+  session({
+    secret: "session secret",
+    resave: true,
+    saveUninitialized: true
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// use connect flash
+app.use(flash());
+
+// Global variables
+app.use(function(req, res, next) {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  res.locals.error = req.flash("error");
+  res.locals.user = req.user || null;
+  next();
+});
 
 //Routes :
-app.get('/' , (req, res) => {
-  res.send('working')  
-});
-// app.use('/api/posts', postRouter);
-app.use('/auth', oauthRouter);
+app.use("/", indexRouter);
 
-app.listen(port, () => console.log('server runing on port ' + port + ' ...'));
+// 404 response handler  :
+app.get('*', function(req, res){
+  res.status(404).render('404', {
+    header: '404',
+    message: 'this is not the page you are looking for'
+  });
+});
+
+app.listen(port, () => console.log("server runing on port " + port + " ..."));

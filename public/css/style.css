@@ -1,0 +1,19 @@
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+.fixed-height {
+  min-height: 90vh;
+}
+.sidenav-trigger {
+  margin: 0 ! important;
+  font-size: 150%
+}
+.story-text {
+  min-height: 140px
+}
