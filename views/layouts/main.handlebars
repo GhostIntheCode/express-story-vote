@@ -39,9 +39,12 @@
         $(document).ready(function () {
             $('select').formSelect();
         });
-         CKEDITOR.replace('body', {
+        const ckFound = document.querySelector('#bodyCK')
+        if (ckFound) {
+         CKEDITOR.replace('bodyCK', {
             plugins: 'wysiwygarea,toolbar,basicstyles,link'
         });
+        }
     </script>
 </body>
 

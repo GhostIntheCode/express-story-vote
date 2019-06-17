@@ -5,6 +5,8 @@ const express = require("express"),
 const { ensureAuthenticated, ensureGuest } = require("../helpers/auth");
 // controllers
 const storiesController = require("../controllers/stories");
+// multer 
+const imageCheck = require('../middleware/imageFileMulter');
 // models
 const Story = require("../models/story");
 const User = require("../models/user");
@@ -73,8 +75,8 @@ router.get("/my", ensureAuthenticated, (req, res) => {
 });
 
 // * unsafe Routes
-router.post("/add", ensureAuthenticated, storiesController.addStory);
-router.put("/edit/:id", ensureAuthenticated, storiesController.editStory);
+router.post("/add", ensureAuthenticated, imageCheck, storiesController.addStory);
+router.put("/edit/:id", ensureAuthenticated, imageCheck, storiesController.editStory);
 router.delete("/:id", ensureAuthenticated, storiesController.deleteStory);
 // Comments
 router.post("/comment/:id", ensureAuthenticated, storiesController.addComment);

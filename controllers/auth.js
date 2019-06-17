@@ -40,7 +40,7 @@ module.exports = {
             firstName: req.body.name,
             email: req.body.email,
             password: req.body.password[0],
-            image: "/img/NoImage.jpg"
+            image: "/img/NoImage-user.png"
           });
           // hash v2 :
           // using a pre method to hash password on the user model 

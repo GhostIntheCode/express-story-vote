@@ -3,16 +3,20 @@ const Story = require("../models/story");
 
 module.exports = {
   addStory: (req, res) => {
-    console.log(req.body);
+    const url = req.protocol + "://" + req.get("host");
     const newStory = {
       title: req.body.title,
       body: req.body.body,
       status: req.body.status,
-      creator: req.user.id
+      creator: req.user.id,
+      image: url + "/img/NoImage.jpg",
     };
     if (!newStory.body) newStory.body = "to be writen soon...";
     if (!req.body.allowComments) {
       newStory.allowComments = false;
+    }
+    if (req.file) {
+      newStory.image = url + "/stories/images/dev/" + req.file.filename;
     }
     new Story(newStory).save().then(story => {
       res.redirect(`/stories/show/${story.id}`);

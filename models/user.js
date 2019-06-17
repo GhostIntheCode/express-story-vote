@@ -13,6 +13,7 @@ const userSchema = new Schema({
 });
 
 userSchema.pre("save", function(next) {
+  if (!this.password) return next();
   console.log('entered');
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(this.password, salt, (err, hashedPassword) => {

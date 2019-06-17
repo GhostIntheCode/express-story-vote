@@ -1,10 +1,10 @@
 <h2>add a story</h2>
 
-<form action="" method="POST">
+<form action="" method="POST" enctype="multipart/form-data">
   <div class="row">
     <div class="input-field">
-      <input type="text" id="title" name="title" class="validate" required
-      <label for="title">Title</label>
+      <input type="text" id="title" name="title" class="validate" required>
+       <label for="title">Title</label>
     </div>
   </div>
   <div class="row">
@@ -14,22 +14,28 @@
       <option value="unpublished">Unpublished</option>
     </select>
   </div>
+  <div class="row center-align">
+    <input type="file" name="image" id="fileUpload" hidden>
+    <button href="#" type="Submit" id="imgUp" class="waves-effect purple btn">choose a cover image</button>
+  </div>
   <div class="row">
     <label>
-      <input
-        name="allowComments"
-        type="checkbox"
-        class="filled-in"
-        checked="checked"
-      />
+      <input name="allowComments" type="checkbox" class="filled-in purple" checked="checked" />
       <span>Allow Comments</span>
     </label>
   </div>
   <div class="row">
     <h5 for="body" class="bold">What's On Your Mind</h5>
-    <textarea name="body" id="body" class="materialize-textarea" required></textarea>
+    <textarea name="body" id="bodyCK" class="materialize-textarea" required></textarea>
   </div>
   <div class="row">
-    <button href="#" type="Submit" class="waves-effect btn">Submit</button>
+    <button href="#" type="Submit" class="waves-effect btn purple" style="width: 100%;">Submit</button>
   </div>
 </form>
+<script>
+  document.getElementById("imgUp").addEventListener('click', function (event) {
+    event.preventDefault();
+    document.getElementById("fileUpload").click();
+  })
+
+</script>
