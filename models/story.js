@@ -11,30 +11,45 @@ const storySchema = new Schema({
     required: true
   },
   image: String,
-  allowComments:{ type: Boolean, default: true },
+  allowComments: { type: Boolean, default: true },
   status: { type: String, default: "public" },
   creator: {
-      type: Schema.Types.ObjectId,
-      ref: 'users'
+    type: Schema.Types.ObjectId,
+    ref: "user"
   },
+  votes: {
+    type: Schema.Types.ObjectId,
+    ref: "vote"
+  },
+  votesInternal:[
+    {
+      direction: { type: Number, enum: [1, 0, -1], default: 0 },
+      voteCreator: {
+        type: Schema.Types.ObjectId,
+        ref: "user"
+      }
+    }
+  ],
   date: {
     type: Date,
     default: Date.now
   },
-  comments: [{
+  comments: [
+    {
       commentBody: {
-          type: String,
-          required: true
+        type: String,
+        required: true
       },
       commentDate: {
-          type: Date,
-          default: Date.now
+        type: Date,
+        default: Date.now
       },
       commentCreator: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: "user"
       }
-  }]
+    }
+  ]
 });
 
-module.exports = mongoose.model("story", storySchema, 'stories');
+module.exports = mongoose.model("story", storySchema, "stories");

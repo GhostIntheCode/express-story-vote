@@ -7,7 +7,7 @@ const { ensureAuthenticated, ensureGuest } = require("../helpers/auth");
 const storiesController = require("../controllers/stories");
 // models
 const Story = require("../models/story");
-const User = require("../models/user");
+const Vote = require("../models/vote");
 
 // * safe routes
 // get public stories view
@@ -15,7 +15,12 @@ router.get("/", (req, res) => {
   Story.find({ status: "public" })
     .sort({ date: "desc" })
     .populate("creator")
+    .populate("votes")
     .then(stories => {
+      console.log("TCL: stories", stories)
+      // Vote.find({ storyId: { $lte: stories.id } }).then(vote => {
+      //   console.log("TCL: vote", vote);
+      // });
       res.render("stories/index", { stories });
     });
 });
@@ -35,7 +40,7 @@ router.get("/show/:id", (req, res) => {
         if (story.creator.id == req.user.id) {
           return res.render("stories/show", { story });
         } else {
-          res.redirect('/stories')
+          res.redirect("/stories");
         }
       } else {
         res.redirect("/stories");
@@ -77,11 +82,16 @@ router.post("/add", ensureAuthenticated, storiesController.addStory);
 router.put("/edit/:id", ensureAuthenticated, storiesController.editStory);
 router.delete("/:id", ensureAuthenticated, storiesController.deleteStory);
 // Comments
-router.post("/comment/:id", ensureAuthenticated, storiesController.addComment);
-router.delete(
-  "/comment/:id",
-  ensureAuthenticated,
-  storiesController.deleteComment
-);
+router
+  .route("/comment/:storyId")
+  .post(ensureAuthenticated, storiesController.addComment)
+  .delete(ensureAuthenticated, storiesController.deleteComment);
 
+// Votes
+// TODO: add ensure auth
+// router.post("/upVote/:storyId/:vote", storiesController.upVoteToggle);
+// router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
+// intern vote   
+router.post("/upVote/:storyId/:vote", storiesController.upVote);
+// router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
 module.exports = router;

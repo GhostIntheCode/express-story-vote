@@ -13,15 +13,19 @@ const userSchema = new Schema({
 });
 
 userSchema.pre("save", function(next) {
-  console.log('entered');
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(this.password, salt, (err, hashedPassword) => {
-      console.log("TCL: this.password", this.password)
-      if (err) throw err;
-      this.password = hashedPassword;
-      next();
+  if(this.password) {
+    console.log('entered');
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(this.password, salt, (err, hashedPassword) => {
+        console.log("TCL: this.password", this.password)
+        if (err) throw err;
+        this.password = hashedPassword;
+        next();
+      });
     });
-  });
+  } else {
+    next();
+  }
 });
 
 userSchema.methods.isValidPassword = async function(newPassword) {
@@ -31,4 +35,4 @@ userSchema.methods.isValidPassword = async function(newPassword) {
     console.log(error);
   }
 };
-module.exports = mongoose.model("users", userSchema);
+module.exports = mongoose.model("user", userSchema);
