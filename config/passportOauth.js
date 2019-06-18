@@ -1,12 +1,38 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy,
   LocalStrategy = require("passport-local").Strategy,
+  JwtStrategy = require("passport-jwt").Strategy,
+  ExtractJwt = require('passport-jwt').ExtractJwt,
   FacebookStrategy = require("passport-facebook").Strategy,
   // TwitterStrategy = require("passport-twitter").Strategy,
   User = require("../models/user"),
-  bcrypt = require("bcryptjs"),
+  // bcrypt = require("bcryptjs"),
   keys = require("./keys");
 
 module.exports = function(passport) {
+  // for api :
+  var opts = {};
+  opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+  opts.secretOrKey = "secret";
+  opts.issuer = "accounts.examplesoft.com";
+  opts.audience = "storybooks.com";
+  opts.passReqToCallback = true;
+  passport.use(
+    new JwtStrategy(opts, function(req, jwt_payload, done) {
+      User.findOne({ id: jwt_payload.sub }, function(err, user) {
+
+        // if (err) {
+        //   return done(err, false);
+        // }
+        // if (user) {
+        //   return done(null, user);
+        // } else {
+        //   return done(null, false);
+        //   // or you could create a new account
+        // }
+      });
+    })
+  );
+  // for view:
   passport.use(
     new LocalStrategy(
       {

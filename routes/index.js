@@ -3,7 +3,8 @@ const express = require("express"),
 
 // Routes
 const authRouter = require("./auth"),
-  storiesRouter = require("./stories");
+  storiesRouter = require("./stories"),
+  apiRoutes = require("./api");
 
 // Helpers
 const { ensureAuthenticated, ensureGuest } = require("../helpers/auth");
@@ -24,5 +25,6 @@ router.get("/dashboard", ensureAuthenticated, (req, res) => {
 
 router.use("/auth", authRouter);
 router.use("/stories", storiesRouter);
+router.use("/api", apiRoutes);
 
 module.exports = router;
