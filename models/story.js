@@ -17,19 +17,19 @@ const storySchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "user"
   },
-  votes: {
-    type: Schema.Types.ObjectId,
-    ref: "vote"
-  },
-  votesInternal:[
-    {
-      direction: { type: Number, enum: [1, 0, -1], default: 0 },
-      voteCreator: {
-        type: Schema.Types.ObjectId,
-        ref: "user"
-      }
-    }
-  ],
+  // votes: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: "vote"
+  // },
+  // votesInternal:[
+  //   {
+  //     direction: { type: Number, enum: [1, 0, -1], default: 0 },
+  //     voteCreator: {
+  //       type: Schema.Types.ObjectId,
+  //       ref: "user"
+  //     }
+  //   }
+  // ],
   date: {
     type: Date,
     default: Date.now

@@ -9,18 +9,77 @@ const storiesController = require("../controllers/stories");
 const Story = require("../models/story");
 const Vote = require("../models/vote");
 
+// for public stories feed :
+// checks if current user voted and add votes to a new stories array
+const calculateVotes = async (stories, user) => {
+  let storyTotalVotes = [];
+  for (const story of stories) {
+    const newStory = { ...story._doc };
+    if (user) {
+      newStory.currentUserVoted = false;
+      newStory.currentUserDirection = 0;
+      // for handlebars {
+      newStory.currentUserVotedUp = false;
+      newStory.currentUserVotedDown = false;
+      // }
+      await Vote.findOne({ storyId: story.id, voteCreator: user }).then(
+        async vote => {
+          if (vote) {
+            newStory.currentUserVoted = true;
+            newStory.currentUserDirection = vote.direction;
+            // for handlebars :
+            if (vote.direction > 0) newStory.currentUserVotedUp = true;
+            if (vote.direction < 0) newStory.currentUserVotedDown = true;
+          }
+        }
+      );
+    }
+    newStory.totalVotes = 0;
+    newStory.totalUpVotes = 0;
+    newStory.totalDownVotes = 0;
+    await Vote.find({ storyId: story.id }).then(async votes => {
+      if (votes.length > 0) {
+        await votes.forEach(async vote => {
+          // todo : remove if statements cuz not needed :
+          if (vote.direction < 0) {
+            newStory.totalDownVotes += vote.direction;
+          }
+          if (vote.direction > 0) {
+            newStory.totalUpVotes += vote.direction;
+          }
+          newStory.totalVotes += vote.direction;
+        });
+      }
+    });
+    storyTotalVotes.push(newStory);
+  }
+  return storyTotalVotes;
+
+  // stories.forEach(story => {
+  //   Vote.find({ storyId: story.id }).then(votes => {
+  //     if (votes.length > 0) {
+  //       votes.forEach(vote => {
+  //         if (vote.direction = 1) {
+  //           totalVotes += vote.direction;
+  //           console.log("TCL: calculateTotalVotes -> totalVotes", totalVotes)
+  //         }
+  //       });
+  //     }
+  //   });
+  // });
+};
+
 // * safe routes
 // get public stories view
 router.get("/", (req, res) => {
   Story.find({ status: "public" })
     .sort({ date: "desc" })
     .populate("creator")
-    .populate("votes")
-    .then(stories => {
-      console.log("TCL: stories", stories)
-      // Vote.find({ storyId: { $lte: stories.id } }).then(vote => {
-      //   console.log("TCL: vote", vote);
-      // });
+    .then(async stories => {
+      // add totalVotes
+      const storiesWithVotes = await calculateVotes(stories, req.user);
+      // console.log("TCL: last totalVotes", storiesWithVotes);
+      stories = storiesWithVotes;
       res.render("stories/index", { stories });
     });
 });
@@ -81,17 +140,19 @@ router.get("/my", ensureAuthenticated, (req, res) => {
 router.post("/add", ensureAuthenticated, storiesController.addStory);
 router.put("/edit/:id", ensureAuthenticated, storiesController.editStory);
 router.delete("/:id", ensureAuthenticated, storiesController.deleteStory);
-// Comments
+// * Comments
 router
   .route("/comment/:storyId")
   .post(ensureAuthenticated, storiesController.addComment)
   .delete(ensureAuthenticated, storiesController.deleteComment);
 
-// Votes
+// * Votes
 // TODO: add ensure auth
-// router.post("/upVote/:storyId/:vote", storiesController.upVoteToggle);
-// router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
-// intern vote   
-router.post("/upVote/:storyId/:vote", storiesController.upVote);
+// External vote collection
+// router.post("/upVote/:storyId/:vote", ( req, res ) => res.json({ message : 'voting route reached !'}));
+router.post("/upVote/:storyId/:vote", storiesController.upVoteToggle);
+router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
+// intern vote
+// router.post("/upVote/:storyId/:vote", storiesController.upVote);
 // router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
 module.exports = router;

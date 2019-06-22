@@ -5,22 +5,19 @@ const mongoose = require("mongoose");
 
 module.exports = {
   addStory: (req, res) => {
-    // new Vote().save().then(vote => {
-      const newStory = {
-        title: req.body.title,
-        body: req.body.body,
-        status: req.body.status,
-        creator: req.user.id,
-        // votes: vote.id
-      };
-      if (!newStory.body) newStory.body = "to be writen soon...";
-      if (!req.body.allowComments) {
-        newStory.allowComments = false;
-      }
-      new Story(newStory).save().then(story => {
-        res.redirect(`/stories/show/${story.id}`);
-      });
-    // });
+    const newStory = {
+      title: req.body.title,
+      body: req.body.body,
+      status: req.body.status,
+      creator: req.user.id
+    };
+    if (!newStory.body) newStory.body = "to be writen soon...";
+    if (!req.body.allowComments) {
+      newStory.allowComments = false;
+    }
+    new Story(newStory).save().then(story => {
+      res.redirect(`/stories/show/${story.id}`);
+    });
   },
   editStory: (req, res) => {
     Story.findOne({ _id: req.params.id }).then(story => {
@@ -69,30 +66,37 @@ module.exports = {
     // });
     // return
 
+    // Vote.findOne({ _id: "5d0695a1a6039b2ac0d2f497" }).then(v => {
+    //   v.storyId = "5d07ca6db1d4d829e4c32bfa";
+    //   v.direction = -1;
+    //   v.voteCreator = "5d0d01b7547167362c05f2fe";
+    //   v.save()
+    //   return res.json({ message: "vote:", v });
+    // });
+    // return;
+
     // toggle Vote
     let voteNum = req.params.vote == 1 ? 0 : 1;
-
     // find the concerned Story
     Story.findOne({ _id: req.params.storyId }).then(story => {
       // * [X] check if it's his first vote on this story
       Vote.findOne({
-        _id: story.votes,
         storyId: story.id,
-        voteCreator: "5d0681b72feb1b3208c57961"
+        voteCreator: req.user
       }).then(vote => {
         if (!vote) {
-          // * [X] create vote direction plus vote creator
+          // * [X] create new vote with direction and creator
           const newVote = {
             direction: voteNum,
             storyId: story.id,
-            voteCreator: "5d0681b72feb1b3208c57961"
+            voteCreator: req.user
           };
-          newVote.save().then(vote => {
+          Vote.save(newVote).then(vote => {
             story.votes = vote.id;
             return res.json({ message: "up vote created", vote });
           });
         } else {
-          // * [X] update vote direction
+          // * [X] update the vote direction
           vote.direction = voteNum;
           vote.save().then(vote => {
             return res.json({ message: "up vote updated", vote });
@@ -118,46 +122,41 @@ module.exports = {
     Story.findOne({ _id: req.params.storyId }).then(story => {
       // * [X] check if it's his first vote on this story
       Vote.findOne({
-        storyId: req.params.storyId,
-        voteCreator: "5d05524319f9da24bc9cf99b"
+        storyId: story.id,
+        voteCreator: req.user
       }).then(vote => {
         if (!vote) {
-          // * [X] create vote
+          // * [X] create new vote with direction and creator
           const newVote = {
             direction: voteNum,
             storyId: story.id,
-            voteCreator: "5d05524319f9da24bc9cf99b"
+            voteCreator: req.user
           };
-          new Vote(newVote).save().then(vote => {
-            return res.json({
-              message: "down vote created",
-              story,
-              newVote,
-              vote
-            });
+          Vote.save(newVote).then(vote => {
+            story.votes = vote.id;
+            return res.json({ message: "down vote created", story ,vote });
           });
         } else {
-          // * [X] update vote
-          vote.vote = voteNum;
+          // * [X] update the vote direction
+          vote.direction = voteNum;
           vote.save().then(vote => {
-            return res.json({ message: "down vote updated", vote });
+            return res.json({ message: "down vote updated", story, vote });
           });
         }
       });
     });
   },
-  // intern Votes : 
+  // intern Votes :
   upVote: (req, res) => {
-
-    // check if update 
+    // check if update
     // Story.findOne({"votesInternal.direction": {$lte: 1 }}).then(vote => {
     // Story.findOne({"votesInternal.voteCreator": {$lte: '5d0681b72feb1b3208c57933' }}).then(vote => {
     //   console.log(vote);
     // })
     // return
-    
-    // create vote 
-    Story.findOne({ _id: req.params.storyId}).then(story => {
+
+    // create vote
+    Story.findOne({ _id: req.params.storyId }).then(story => {
       const voteNum = req.params.vote == 1 ? 0 : 1;
       const newVote = {
         direction: voteNum,

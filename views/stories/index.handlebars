@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-image">
                 {{#if ../user}}
-                {{{editIcon creator.id ../user.id id}}}
+                {{{editIcon creator.id ../user.id _id}}}
                 {{/if}}
                 {{!-- <a href="/stories/edit/{{id}}" class="btn-floating halfway-fab red">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -16,18 +16,32 @@
                 <h4 class="">{{title}}</h4>
                 <p class="story-text">
                     {{{ stripTags (truncate body 150) }}}
-                <a href="/stories/Show/{{id}}" class="purple-text lighten-3">...Read More</a>
+                    <a href="/stories/Show/{{_id}}" class="purple-text lighten-3">...Read More</a>
                 </p>
             </div>
+            {{!-- votes --}}
+            <div class="card-action center-align">
+                {{!-- {{#if ../user}}{{/if}} --}}
+                <a {{#if ../user}} onclick="sendVote('{{_id}}',{{currentUserDirection}}, 'upVote')" {{/if}}
+                    class=" {{#if currentUserVotedUp }} purple-text {{else}} black-text {{/if}}"
+                    style="display: contents; cursor: pointer;">
+                    <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                </a>
+                <p> {{totalVotes}} </p>
+                <a {{#if ../user}} onclick="sendVote('{{_id}}', {{currentUserDirection}},'downVote')" {{/if}}
+                    class=" {{#if currentUserVotedDown }} purple-text {{else}} black-text {{/if}}"
+                    style="display: contents;cursor: pointer;">
+                    <i class="fa fa-chevron-down {{#if currentUserVotedDown }} red-text {{/if}}" aria-hidden="true"></i>
+                </a>
+            </div>
+            {{!-- creator --}}
             <div class="card-action center-align">
                 <div class="chip">
                     <img src="{{creator.image}}" alt="Creator">
                     <a href="/stories/user/{{creator.id}}" class="black-text">
-                    {{creator.firstName}} {{creator.lastName}}
+                        {{creator.firstName}} {{creator.lastName}}
                     </a>
                 </div>
-                {{!-- <a href="#">This is a link</a>
-                <a href="#">This is a link</a> --}}
             </div>
         </div>
     </div>
@@ -35,3 +49,16 @@
     <p>no stories</p>
     {{/each}}
 </div>
+
+<script>
+    function sendVote(storyId, previousVoteValue, direction) {
+        alert(`${direction} sent to ${storyId}`)
+        // send fetch request with it : /upVote/:storyId/:vote
+        fetch(`/stories/${direction}/${storyId}/${previousVoteValue}`, { method: 'POST' }).then(result => {
+            return result.json();
+        }).then(json => {
+            console.log(json);
+            // check response and update dom based on it 
+        })
+    }
+</script>

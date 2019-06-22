@@ -13,4 +13,18 @@ const votesSchema = new Schema({
   }
 });
 
+// const postVotesSchema = new Schema({
+//   storyId: {
+//     type: Schema.Types.ObjectId,
+//     ref: "stories"
+//   },
+//   Votes: [{
+//     direction: { type: Number, enum: [1, 0, -1], default: 0 },
+//     voteCreator: {
+//       type: Schema.Types.ObjectId,
+//       ref: "user"
+//     }
+//   }]
+// });
+
 module.exports = mongoose.model("vote", votesSchema);

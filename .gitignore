@@ -5,6 +5,7 @@
 /routes/posts.js
 /models/posts.js
 config/keys_dev.js
+public/stories/images/dev
 # compiled output
 /dist
 /tmp
