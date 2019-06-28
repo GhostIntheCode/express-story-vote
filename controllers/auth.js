@@ -1,6 +1,5 @@
 const passport = require("passport"),
-  User = require("../models/user"),
-  bcrypt = require("bcryptjs");
+  User = require("../models/user");
 
 module.exports = {
   login: (req, res, next) => {
@@ -43,7 +42,7 @@ module.exports = {
             image: "/img/NoImage-user.png"
           });
           // hash v2 :
-          // using a pre method to hash password on the user model 
+          // using a pre method to hash password on the user model
           newUser
             .save()
             .then(user => {
@@ -54,26 +53,6 @@ module.exports = {
               console.log(err);
               return;
             });
-          // hash V1 :
-          // bcrypt.genSalt(10, (err, salt) => {
-          //   bcrypt.hash(newUser.password, salt, (err, hash) => {
-          //     if (err) throw err;
-          //     newUser.password = hash;
-          //     newUser
-          //       .save()
-          //       .then(user => {
-          //         req.flash(
-          //           "success_msg",
-          //           "You are now registered and can log in"
-          //         );
-          //         res.redirect("/auth/login");
-          //       })
-          //       .catch(err => {
-          //         console.log(err);
-          //         return;
-          //       });
-          //   });
-          // });
         }
       });
     }

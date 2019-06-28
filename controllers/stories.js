@@ -65,21 +65,6 @@ module.exports = {
   },
   // External votes :
   upVoteToggle: (req, res) => {
-    //TODO: to get rid of this delete :
-    // Vote.deleteOne({ _id: "5d06953ca0260a1f2492f3b9" }).then(v => {
-    //   return res.json({ message: "v:", v});
-    // });
-    // return
-
-    // Vote.findOne({ _id: "5d0695a1a6039b2ac0d2f497" }).then(v => {
-    //   v.storyId = "5d07ca6db1d4d829e4c32bfa";
-    //   v.direction = -1;
-    //   v.voteCreator = "5d0d01b7547167362c05f2fe";
-    //   v.save()
-    //   return res.json({ message: "vote:", v });
-    // });
-    // return;
-
     // toggle Vote
     let voteNum = req.params.vote == 1 ? 0 : 1;
     // find the concerned Story
@@ -108,30 +93,20 @@ module.exports = {
           });
         }
       });
-      //   some mongoose  learning :
-      //   db.inventory.find( { "vote.vote": {vote: 1 } } )
-      //   db.inventory.find( { "vote.vote": {$lte: -1 } } )
-      //   db.inventory.insertMany( [
-      //     { item: "journal", votes: [ { vote: 1 }, { warehouse: "C", vote: -1 } ] },
-      //     { item: "notebook", votes: [ { warehouse: "C", qty: 5 } ] }
-      //  ]);
-
-      // })
     });
   },
   downVoteToggle: (req, res) => {
-    // * [X] toggle Vote
+    //  toggle Vote
     let voteNum = req.params.vote == -1 ? 0 : -1;
-
-    // * [X] find the concerned Story
+    //  find the concerned Story
     Story.findOne({ _id: req.params.storyId }).then(story => {
-      // * [X] check if it's his first vote on this story
+      //  check if it's his first vote on this story
       Vote.findOne({
         storyId: story.id,
         voteCreator: req.user
       }).then(vote => {
         if (!vote) {
-          // * [X] create new vote with direction and creator
+          //  create new vote with direction and creator
           const newVote = {
             direction: voteNum,
             storyId: story.id,
@@ -142,37 +117,12 @@ module.exports = {
             return res.json({ message: "down vote created", story ,vote });
           });
         } else {
-          // * [X] update the vote direction
+          // update the vote direction
           vote.direction = voteNum;
           vote.save().then(vote => {
             return res.json({ message: "down vote updated", story, vote });
           });
         }
-      });
-    });
-  },
-  // intern Votes :
-  upVote: (req, res) => {
-    // check if update
-    // Story.findOne({"votesInternal.direction": {$lte: 1 }}).then(vote => {
-    // Story.findOne({"votesInternal.voteCreator": {$lte: '5d0681b72feb1b3208c57933' }}).then(vote => {
-    //   console.log(vote);
-    // })
-    // return
-
-    // create vote
-    Story.findOne({ _id: req.params.storyId }).then(story => {
-      const voteNum = req.params.vote == 1 ? 0 : 1;
-      const newVote = {
-        direction: voteNum,
-        voteCreator: "5d0681b72feb1b3208c57961"
-      };
-      // add to the begining of the array
-      story.votesInternal.unshift(newVote);
-
-      story.save().then(story => {
-        return res.json({ message: "up vote created", story, newVote });
-        // res.redirect(`/stories/show/${story.id}`);
       });
     });
   }

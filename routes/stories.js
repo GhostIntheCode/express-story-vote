@@ -7,7 +7,6 @@ const storiesController = require("../controllers/stories");
 const imageCheck = require('../middleware/imageFileMulter');
 // models
 const Story = require("../models/story");
-const Vote = require("../models/vote");
 // Helpers
 const { ensureAuthenticated } = require("../helpers/auth");
 const { calculateVotes } = require("../helpers/vote");
@@ -54,7 +53,6 @@ router.get("/show/:id", (req, res) => {
 // get edit story view
 router.get("/edit/:id", ensureAuthenticated, (req, res) => {
   Story.findOne({ _id: req.params.id })
-    // .populate('creator')
     .then(story => {
       if (story.creator != req.user.id) {
         res.redirect(`/stories/show/${story.id}`);
@@ -98,12 +96,7 @@ router
   .delete(ensureAuthenticated, storiesController.deleteComment);
 
 // * Votes
-// TODO: add ensure auth
 // External vote collection
-// router.post("/upVote/:storyId/:vote", ( req, res ) => res.json({ message : 'voting route reached !'}));
-router.post("/upVote/:storyId/:vote", storiesController.upVoteToggle);
-router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
-// intern vote
-// router.post("/upVote/:storyId/:vote", storiesController.upVote);
-// router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
+router.post("/upVote/:storyId/:vote",ensureAuthenticated, storiesController.upVoteToggle);
+router.post("/downVote/:storyId/:vote",ensureAuthenticated, storiesController.downVoteToggle);
 module.exports = router;

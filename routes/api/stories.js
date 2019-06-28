@@ -27,4 +27,8 @@ router.delete("/:id", passportJwt, storiesController.deleteStory);
 router.post("/comment/:id", passportJwt, storiesController.addComment);
 router.delete("/comment/:id", passportJwt, storiesController.deleteComment);
 
+// * Votes
+router.post("/upVote/:storyId/:vote", passportJwt, storiesController.upVoteToggle);
+router.post("/downVote/:storyId/:vote", passportJwt, storiesController.downVoteToggle);
+
 module.exports = router;
