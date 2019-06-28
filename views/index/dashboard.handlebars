@@ -8,7 +8,8 @@
         <th>Title</th>
         <th>Date</th>
         <th>Status</th>
-        <th class="center-align">Comments Allowed</th>
+        <th>Votes</th>
+        <th class="center-align">Comments</th>
         <th class="center-align">Actions</th>
       </tr>
     </thead>
@@ -17,10 +18,11 @@
       <tr>
         {{#each stories}}
         <td>
-          <a href="/stories/show/{{ id }}">{{ title }}</a>
+          <a href="/stories/show/{{ _id }}">{{ title }}</a>
         </td>
         <td>{{formatDate date 'MMMM, Do, YYYY'}}</td>
         <td>{{ status }}</td>
+        <td >{{ totalVotes }}</td>
         <td class="center-align">
           {{#if allowComments}}
           <h5>
@@ -33,8 +35,8 @@
           {{/if}}
         </td>
         <td class="center-align">
-          <form method="POST" action="/stories/{{ id }}?_method=DELETE">
-            <a href="/stories/edit/{{ id }}" class="btn waves-effect waves-light">Edit</a>
+          <form method="POST" action="/stories/{{ _id }}?_method=DELETE">
+            <a href="/stories/edit/{{ _id }}" class="btn waves-effect waves-light">Edit</a>
             <input type="hidden" name="_method" value="DELETE">
             <button class="btn waves-effect waves-light red" type="submit" name="action">
               delete

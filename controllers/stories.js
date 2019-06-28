@@ -91,7 +91,7 @@ module.exports = {
             storyId: story.id,
             voteCreator: req.user
           };
-          Vote.save(newVote).then(vote => {
+          new Vote(newVote).save().then(vote => {
             story.votes = vote.id;
             return res.json({ message: "up vote created", vote });
           });

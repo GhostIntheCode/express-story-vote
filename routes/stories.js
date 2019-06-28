@@ -1,73 +1,16 @@
 const express = require("express"),
   router = express.Router();
 
-// Helpers
-const { ensureAuthenticated, ensureGuest } = require("../helpers/auth");
 // controllers
 const storiesController = require("../controllers/stories");
 // models
 const Story = require("../models/story");
 const Vote = require("../models/vote");
+// Helpers
+const { ensureAuthenticated, ensureGuest } = require("../helpers/auth");
+const { calculateVotes } = require("../helpers/vote");
 
 // for public stories feed :
-// checks if current user voted and add votes to a new stories array
-const calculateVotes = async (stories, user) => {
-  let storyTotalVotes = [];
-  for (const story of stories) {
-    const newStory = { ...story._doc };
-    if (user) {
-      newStory.currentUserVoted = false;
-      newStory.currentUserDirection = 0;
-      // for handlebars {
-      newStory.currentUserVotedUp = false;
-      newStory.currentUserVotedDown = false;
-      // }
-      await Vote.findOne({ storyId: story.id, voteCreator: user }).then(
-        async vote => {
-          if (vote) {
-            newStory.currentUserVoted = true;
-            newStory.currentUserDirection = vote.direction;
-            // for handlebars :
-            if (vote.direction > 0) newStory.currentUserVotedUp = true;
-            if (vote.direction < 0) newStory.currentUserVotedDown = true;
-          }
-        }
-      );
-    }
-    newStory.totalVotes = 0;
-    newStory.totalUpVotes = 0;
-    newStory.totalDownVotes = 0;
-    await Vote.find({ storyId: story.id }).then(async votes => {
-      if (votes.length > 0) {
-        await votes.forEach(async vote => {
-          // todo : remove if statements cuz not needed :
-          if (vote.direction < 0) {
-            newStory.totalDownVotes += vote.direction;
-          }
-          if (vote.direction > 0) {
-            newStory.totalUpVotes += vote.direction;
-          }
-          newStory.totalVotes += vote.direction;
-        });
-      }
-    });
-    storyTotalVotes.push(newStory);
-  }
-  return storyTotalVotes;
-
-  // stories.forEach(story => {
-  //   Vote.find({ storyId: story.id }).then(votes => {
-  //     if (votes.length > 0) {
-  //       votes.forEach(vote => {
-  //         if (vote.direction = 1) {
-  //           totalVotes += vote.direction;
-  //           console.log("TCL: calculateTotalVotes -> totalVotes", totalVotes)
-  //         }
-  //       });
-  //     }
-  //   });
-  // });
-};
 
 // * safe routes
 // get public stories view
@@ -121,9 +64,12 @@ router.get("/edit/:id", ensureAuthenticated, (req, res) => {
 // get stories by user
 router.get("/user/:userId", (req, res) => {
   Story.find({ creator: req.params.userId, status: "public" })
+    .sort({ date: "desc" })
     .populate("creator")
-    // .populate("comments.commentCreator")
-    .then(stories => {
+    .then(async stories => {
+      // add totalVotes
+      const storiesWithVotes = await calculateVotes(stories, req.user);
+      stories = storiesWithVotes;
       res.render("stories/index", { stories });
     });
 });
@@ -131,7 +77,10 @@ router.get("/user/:userId", (req, res) => {
 router.get("/my", ensureAuthenticated, (req, res) => {
   Story.find({ creator: req.user.id })
     .populate("creator")
-    .then(stories => {
+    .then(async stories => {
+      // add totalVotes
+      const storiesWithVotes = await calculateVotes(stories, req.user);
+      stories = storiesWithVotes;
       res.render("stories/index", { stories });
     });
 });
