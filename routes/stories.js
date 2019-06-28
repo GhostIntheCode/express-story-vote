@@ -9,6 +9,12 @@ const storiesController = require("../controllers/stories");
 const imageCheck = require('../middleware/imageFileMulter');
 // models
 const Story = require("../models/story");
+const Vote = require("../models/vote");
+// Helpers
+const { ensureAuthenticated } = require("../helpers/auth");
+const { calculateVotes } = require("../helpers/vote");
+
+// for public stories feed :
 
 // * safe routes
 // get public stories view
@@ -16,7 +22,11 @@ router.get("/", (req, res) => {
   Story.find({ status: "public" })
     .sort({ date: "desc" })
     .populate("creator")
-    .then(stories => {
+    .then(async stories => {
+      // add totalVotes
+      const storiesWithVotes = await calculateVotes(stories, req.user);
+      // console.log("TCL: last totalVotes", storiesWithVotes);
+      stories = storiesWithVotes;
       res.render("stories/index", { stories });
     });
 });
@@ -36,7 +46,7 @@ router.get("/show/:id", (req, res) => {
         if (story.creator.id == req.user.id) {
           return res.render("stories/show", { story });
         } else {
-          res.redirect('/stories')
+          res.redirect("/stories");
         }
       } else {
         res.redirect("/stories");
@@ -58,9 +68,12 @@ router.get("/edit/:id", ensureAuthenticated, (req, res) => {
 // get stories by user
 router.get("/user/:userId", (req, res) => {
   Story.find({ creator: req.params.userId, status: "public" })
+    .sort({ date: "desc" })
     .populate("creator")
-    // .populate("comments.commentCreator")
-    .then(stories => {
+    .then(async stories => {
+      // add totalVotes
+      const storiesWithVotes = await calculateVotes(stories, req.user);
+      stories = storiesWithVotes;
       res.render("stories/index", { stories });
     });
 });
@@ -68,7 +81,10 @@ router.get("/user/:userId", (req, res) => {
 router.get("/my", ensureAuthenticated, (req, res) => {
   Story.find({ creator: req.user.id })
     .populate("creator")
-    .then(stories => {
+    .then(async stories => {
+      // add totalVotes
+      const storiesWithVotes = await calculateVotes(stories, req.user);
+      stories = storiesWithVotes;
       res.render("stories/index", { stories });
     });
 });
@@ -77,12 +93,19 @@ router.get("/my", ensureAuthenticated, (req, res) => {
 router.post("/add", ensureAuthenticated, imageCheck, storiesController.addStory);
 router.put("/edit/:id", ensureAuthenticated, imageCheck, storiesController.editStory);
 router.delete("/:id", ensureAuthenticated, storiesController.deleteStory);
-// Comments
-router.post("/comment/:id", ensureAuthenticated, storiesController.addComment);
-router.delete(
-  "/comment/:id",
-  ensureAuthenticated,
-  storiesController.deleteComment
-);
+// * Comments
+router
+  .route("/comment/:storyId")
+  .post(ensureAuthenticated, storiesController.addComment)
+  .delete(ensureAuthenticated, storiesController.deleteComment);
 
+// * Votes
+// TODO: add ensure auth
+// External vote collection
+// router.post("/upVote/:storyId/:vote", ( req, res ) => res.json({ message : 'voting route reached !'}));
+router.post("/upVote/:storyId/:vote", storiesController.upVoteToggle);
+router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
+// intern vote
+// router.post("/upVote/:storyId/:vote", storiesController.upVote);
+// router.post("/downVote/:storyId/:vote", storiesController.downVoteToggle);
 module.exports = router;
