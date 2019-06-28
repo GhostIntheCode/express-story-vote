@@ -1,35 +1,32 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy,
   LocalStrategy = require("passport-local").Strategy,
   JwtStrategy = require("passport-jwt").Strategy,
-  ExtractJwt = require('passport-jwt').ExtractJwt,
+  ExtractJwt = require("passport-jwt").ExtractJwt,
   FacebookStrategy = require("passport-facebook").Strategy,
-  // TwitterStrategy = require("passport-twitter").Strategy,
   User = require("../models/user"),
-  // bcrypt = require("bcryptjs"),
   keys = require("./keys");
 
 module.exports = function(passport) {
   // for api :
-  var opts = {};
-  opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-  opts.secretOrKey = "secret";
-  opts.issuer = "accounts.examplesoft.com";
-  opts.audience = "storybooks.com";
-  opts.passReqToCallback = true;
   passport.use(
-    new JwtStrategy(opts, function(req, jwt_payload, done) {
-      User.findOne({ id: jwt_payload.sub }, function(err, user) {
+    new JwtStrategy({
+      jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+      secretOrKey: keys.JWT_SECRET
+    }, async function(jwt_payload, done) {
+      try {
+        // Find the user specified in token
+        const user = await User.findById(jwt_payload.sub);
 
-        // if (err) {
-        //   return done(err, false);
-        // }
-        // if (user) {
-        //   return done(null, user);
-        // } else {
-        //   return done(null, false);
-        //   // or you could create a new account
-        // }
-      });
+        // If user doesn't exist, handle it
+        if (!user) {
+          return done(null, false);
+        }
+
+        // Otherwise, return the user
+        done(null, user);
+      } catch (error) {
+        done(error, false);
+      }
     })
   );
   // for view:
@@ -39,33 +36,27 @@ module.exports = function(passport) {
         usernameField: "email"
       },
       async (email, password, done) => {
-        User.findOne({
-          email: email
-        }).then(user => {
-          if (!user) {
-            return done(null, false, { message: "No User Found" });
-          }
-          // match password v2:
-          user.isValidPassword(password).then(isMatch => {
-            if (isMatch) {
-              return done(null, user);
-            } else {
-              return done(null, false, {
-                message: "Incorrect Email and/or Password"
-              });
+        try {
+          User.findOne({
+            email
+          }).then(user => {
+            if (!user) {
+              return done(null, false, { message: "No User Found" });
             }
+            // match password v2:
+            user.isValidPassword(password).then(isMatch => {
+              if (isMatch) {
+                return done(null, user);
+              } else {
+                return done(null, false, {
+                  message: "Incorrect Email and/or Password"
+                });
+              }
+            });
           });
-
-          // Match password v1:
-          // bcrypt.compare(password, user.password, (err, isMatch) => {
-          //   if (err) throw err;
-          //   if (isMatch) {
-          //     return done(null, user);
-          //   } else {
-          //     return done(null, false, { message: "Password Incorrect" });
-          //   }
-          // });
-        });
+        } catch (error) {
+          done(error, false);
+        }
       }
     )
   );

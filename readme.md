@@ -1,4 +1,5 @@
 # Javascript Express app 
-
+* image uploading and /API option
+* passport jwt authentication FOR API Clients,
 ### user authentication 
-* Passport Oauth 2.0
+* Passport Jwt 

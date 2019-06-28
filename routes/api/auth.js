@@ -1,13 +1,23 @@
 const express = require("express"),
+  passport = require("passport"),
   router = express.Router(),
-passport = require('passport');
+  authController = require("../../controllers/api/auth"),
+  passportJwt = passport.authenticate("jwt", { session: false });
 
 router.post(
-  "/auth/jwt",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    res.send(req.user.profile);
-  }
+  "/login",
+  authController.login
 );
+router.post(
+  "/signUp",
+  authController.signUp
+);
+
+router
+  .route("/secret")
+  .get(
+    passportJwt,
+    authController.secret
+  );
 
 module.exports = router;

@@ -2,14 +2,13 @@ const express = require("express"),
   router = express.Router();
 
 // Helpers
-const { ensureAuthenticated, ensureGuest } = require("../helpers/auth");
+const { ensureAuthenticated } = require("../helpers/auth");
 // controllers
 const storiesController = require("../controllers/stories");
 // multer 
 const imageCheck = require('../middleware/imageFileMulter');
 // models
 const Story = require("../models/story");
-const User = require("../models/user");
 
 // * safe routes
 // get public stories view
