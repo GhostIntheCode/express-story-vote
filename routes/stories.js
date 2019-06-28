@@ -1,8 +1,6 @@
 const express = require("express"),
   router = express.Router();
 
-// Helpers
-const { ensureAuthenticated } = require("../helpers/auth");
 // controllers
 const storiesController = require("../controllers/stories");
 // multer 
