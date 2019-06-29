@@ -25,6 +25,7 @@ module.exports = {
     });
   },
   editStory: (req, res) => {
+    const url = req.protocol + "://" + req.get("host");
     Story.findOne({ _id: req.params.id }).then(story => {
       // new values
       story.title = req.body.title;
@@ -35,9 +36,11 @@ module.exports = {
       } else {
         story.allowComments = false;
       }
-
+      if (req.file) {
+        story.image = url + "/stories/images/dev/" + req.file.filename;
+      }  
       story.save().then(story => {
-        res.redirect(`/dashboard`);
+        res.redirect(`/stories/show/${story.id}`);
       });
     });
   },
@@ -112,7 +115,7 @@ module.exports = {
             storyId: story.id,
             voteCreator: req.user
           };
-          Vote.save(newVote).then(vote => {
+          new Vote(newVote).save().then(vote => {
             story.votes = vote.id;
             return res.json({ message: "down vote created", story ,vote });
           });

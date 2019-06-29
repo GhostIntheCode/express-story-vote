@@ -8,6 +8,11 @@
             </a>
             {{/if}}
             <ul id="nav-mobile" class="right">
+                <li>
+                    <a href="/search">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    Search</a>
+                </li>
                 {{#if user}}
                 <li class="hide-on-small-only"><a href="/dashboard">Welcome {{user.firstName}}</a></li>
                 <li><a href="/auth/logout">

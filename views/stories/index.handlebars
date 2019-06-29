@@ -1,23 +1,27 @@
+{{#if Stories}}
 <h1>Stories</h1>
+{{/if}}
+
 
 <div class="row">
     {{#each stories}}
     <div class="col s12 m4">
         <div class="card">
-                <a href="/stories/Show/{{id}}">
-            <div class="card-image"style="max-height: 30vh;">
-                <img src="{{image}}" alt="{{title}}" class="responsive-img" style="height:-webkit-fill-available;object-fit:cover;">
-                <span  class="card-title">
-                {{title}}
-                </span>
-                {{#if ../user}}
-                {{{editIcon creator.id ../user.id _id}}}
-                {{/if}}
-                {{!-- <a href="/stories/edit/{{id}}" class="btn-floating halfway-fab red">
+            <a href="/stories/Show/{{_id}}">
+                <div class="card-image" style="max-height: 30vh;">
+                    <img src="{{image}}" alt="{{title}}" class="responsive-img"
+                        style="height:-webkit-fill-available;object-fit:cover;">
+                    <span class="card-title">
+                        {{title}}
+                    </span>
+                    {{#if ../user}}
+                    {{{editIcon creator.id ../user.id _id}}}
+                    {{/if}}
+                    {{!-- <a href="/stories/edit/{{id}}" class="btn-floating halfway-fab red">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                 </a> --}}
-            </div>
-                </a>
+                </div>
+            </a>
             <div class="card-content">
                 {{!-- <h4 class="">{{title}}</h4> --}}
                 <p class="story-text">
@@ -28,13 +32,15 @@
             {{!-- votes --}}
             <div class="card-action center-align">
                 {{!-- {{#if ../user}}{{/if}} --}}
-                <a {{#if ../user}} onclick="sendVote('{{_id}}',{{currentUserDirection}}, 'upVote')" {{/if}}
+                <a {{#if ../user}} onclick="sendVote('{{_id}}',{{currentUserDirection}}, 'upVote')" {{else}}
+                    href="/auth/login" {{/if}}
                     class=" {{#if currentUserVotedUp }} purple-text {{else}} black-text {{/if}}"
                     style="display: contents; cursor: pointer;">
                     <i class="fa fa-chevron-up" aria-hidden="true"></i>
                 </a>
                 <p> {{totalVotes}} </p>
-                <a {{#if ../user}} onclick="sendVote('{{_id}}', {{currentUserDirection}},'downVote')" {{/if}}
+                <a {{#if ../user}} onclick="sendVote('{{_id}}', {{currentUserDirection}},'downVote')" {{else}}
+                    href="/auth/login" {{/if}}
                     class=" {{#if currentUserVotedDown }} purple-text {{else}} black-text {{/if}}"
                     style="display: contents;cursor: pointer;">
                     <i class="fa fa-chevron-down {{#if currentUserVotedDown }} red-text {{/if}}" aria-hidden="true"></i>
@@ -52,19 +58,10 @@
         </div>
     </div>
     {{else}}
-    <p>no stories</p>
+    <div class="row">
+        <p>it seems that there is no stories
+    </div>
     {{/each}}
 </div>
 
-<script>
-    function sendVote(storyId, previousVoteValue, direction) {
-        alert(`${direction} sent to ${storyId}`)
-        // send fetch request with it : /upVote/:storyId/:vote
-        fetch(`/stories/${direction}/${storyId}/${previousVoteValue}`, { method: 'POST' }).then(result => {
-            return result.json();
-        }).then(json => {
-            console.log(json);
-            // check response and update dom based on it 
-        })
-    }
-</script>
+<script src="/js/voting.js"></script>

@@ -1,9 +1,9 @@
 <h2>Edit a story</h2>
-<form action="?_method=PUT" method="POST">
+<form action="?_method=PUT" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="_method" value="PUT">
     <div class="row">
         <div class="input-field">
-            <input type="text" id="title" name="title" class="validate" value='{{story.title}}' required/>
+            <input type="text" id="title" name="title" class="validate" value='{{story.title}}' required />
             <label for="title">Title</label>
         </div>
     </div>
@@ -20,6 +20,10 @@
             {{/select}}
         </select>
     </div>
+    <div class="row center-align">
+        <input type="file" name="image" id="fileUpload" hidden>
+        <button href="#" type="Submit" id="imgUp" class="waves-effect purple btn">choose a cover image</button>
+    </div>
     <div class="row">
         <label>
             <input name="allowComments" type="checkbox" class="filled-in" {{#if story.allowComments}} checked="checked"
@@ -35,3 +39,10 @@
         <button href="#" type="Submit" class="waves-effect btn">Submit</button>
     </div>
 </form>
+<script>
+  document.getElementById("imgUp").addEventListener('click', function (event) {
+    event.preventDefault();
+    document.getElementById("fileUpload").click();
+  })
+
+</script>

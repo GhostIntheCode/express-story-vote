@@ -1,0 +1,29 @@
+<br /><br />
+<h1 class="header red-text">Search stories</h1>
+<div class="row">
+    <div class="card purple darken-2">
+        <div class="row">
+            <div class="card-content white-text">
+        {{#if search}}<p>No stories about : <b>{{ search }}</b>, Try something else...</p>{{/if}}
+        <form action="/stories" method="GET" >
+            <div class="input-group">
+                <div class="row">
+                    <div class="input-field">
+                        <input type="text" id="search" name="search" class="validate" required>
+                        <label for="search">Search</label>
+                    </div>
+                </div>
+                <div class="input-group-btn">
+                    <button class="btn blue darken-3" type="submit" style="width: 100%">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        Search
+                    </button>
+                </div>
+            </div>
+        </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<br /><br />
