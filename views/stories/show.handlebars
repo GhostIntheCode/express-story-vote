@@ -72,17 +72,21 @@
         </div>
         {{!-- Voting card --}}
         <div class="card-action center-align">
-            {{!-- {{#if ../user}}{{/if}} --}}
-            <a {{#if user}} onclick="sendVote('{{story._id}}',{{story.currentUserDirection}}, 'upVote')" {{/if}}
+            <a {{#if user}} onclick="sendVote('{{story._id}}',{{story.currentUserDirection}}, 'upVote')" {{else}}
+                href="/auth/login" {{/if}} id="upVote-{{story._id}}"
                 class=" {{#if story.currentUserVotedUp }} purple-text {{else}} black-text {{/if}}"
                 style="display: contents; cursor: pointer;">
                 <i class="fa fa-chevron-up" aria-hidden="true"></i>
             </a>
-            <p> {{story.totalVotes}} </p>
-            <a {{#if user}} onclick="sendVote('{{story._id}}', {{story.currentUserDirection}},'downVote')" {{/if}}
-                class=" {{#if story.currentUserVotedDown }} purple-text {{else}} black-text {{/if}}"
+            <p id="totalVotes-{{story._id}}"
+                data-key="{{#if story.currentUserVotedUp }}up{{/if}}{{#if story.currentUserVotedDown }}down{{/if}}">
+                {{story.totalVotes}}
+            </p>
+            <a {{#if user}} onclick="sendVote('{{story._id}}', {{story.currentUserDirection}},'downVote')" {{else}}
+                href="/auth/login" {{/if}} id="downVote-{{story._id}}"
+                class=" {{#if story.currentUserVotedDown }} red-text {{else}} black-text {{/if}}"
                 style="display: contents;cursor: pointer;">
-                <i class="fa fa-chevron-down {{#if story.currentUserVotedDown }} red-text {{/if}}" aria-hidden="true"></i>
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
             </a>
         </div>
     </div>

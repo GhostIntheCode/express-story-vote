@@ -31,19 +31,21 @@
             </div>
             {{!-- votes --}}
             <div class="card-action center-align">
-                {{!-- {{#if ../user}}{{/if}} --}}
                 <a {{#if ../user}} onclick="sendVote('{{_id}}',{{currentUserDirection}}, 'upVote')" {{else}}
-                    href="/auth/login" {{/if}}
+                    href="/auth/login" {{/if}} id="upVote-{{_id}}"
                     class=" {{#if currentUserVotedUp }} purple-text {{else}} black-text {{/if}}"
                     style="display: contents; cursor: pointer;">
                     <i class="fa fa-chevron-up" aria-hidden="true"></i>
                 </a>
-                <p> {{totalVotes}} </p>
+                <p id="totalVotes-{{_id}}"
+                    data-key="{{#if currentUserVotedUp }}up{{/if}}{{#if currentUserVotedDown }}down{{/if}}">
+                    {{totalVotes}}
+                </p>
                 <a {{#if ../user}} onclick="sendVote('{{_id}}', {{currentUserDirection}},'downVote')" {{else}}
-                    href="/auth/login" {{/if}}
-                    class=" {{#if currentUserVotedDown }} purple-text {{else}} black-text {{/if}}"
+                    href="/auth/login" {{/if}} id="downVote-{{_id}}"
+                    class=" {{#if currentUserVotedDown }} red-text {{else}} black-text {{/if}}"
                     style="display: contents;cursor: pointer;">
-                    <i class="fa fa-chevron-down {{#if currentUserVotedDown }} red-text {{/if}}" aria-hidden="true"></i>
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
                 </a>
             </div>
             {{!-- creator --}}
