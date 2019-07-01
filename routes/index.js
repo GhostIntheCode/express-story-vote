@@ -1,5 +1,6 @@
 const express = require("express"),
-  router = express.Router();
+  router = express.Router(),
+  fetch = require("node-fetch");
 
 // Routes
 const authRouter = require("./auth"),
@@ -15,6 +16,13 @@ const Story = require("../models/story");
 
 router.get("/", ensureGuest, (req, res) => {
   res.render("index/welcome");
+});
+router.get("/nodeFetch", (req, res) => {
+  fetch("https://api.github.com/users/abayoss")
+    .then(res => res.json())
+    .then(json => {
+      res.json({ appCreator: json });
+    });
 });
 router.get("/search", (req, res) => {
   res.render("index/search");

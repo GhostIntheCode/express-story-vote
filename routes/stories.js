@@ -102,6 +102,10 @@ router.get("/user/:userId", (req, res) => {
       // add totalVotes
       const storiesWithVotes = await calculateVotes(stories, req.user);
       stories = storiesWithVotes;
+      // sort by totall votes
+      stories = stories.sort((s1, s2) =>
+        s1.totalVotes < s2.totalVotes ? 1 : -1
+      );
       res.render("stories/index", { stories });
     });
 });
@@ -114,6 +118,10 @@ router.get("/my", ensureAuthenticated, (req, res) => {
       // add totalVotes
       const storiesWithVotes = await calculateVotes(stories, req.user);
       stories = storiesWithVotes;
+      // sort by totall votes
+      stories = stories.sort((s1, s2) =>
+        s1.totalVotes < s2.totalVotes ? 1 : -1
+      );
       res.render("stories/index", { stories });
     });
 });

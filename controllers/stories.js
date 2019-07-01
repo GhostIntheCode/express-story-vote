@@ -1,7 +1,6 @@
 // models
 const Story = require("../models/story");
 const Vote = require("../models/vote");
-const mongoose = require("mongoose");
 
 module.exports = {
   addStory: (req, res) => {
