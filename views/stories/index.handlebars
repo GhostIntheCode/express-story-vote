@@ -10,7 +10,7 @@
             <a href="/stories/Show/{{_id}}">
                 <div class="card-image" style="max-height: 30vh;">
                     <img src="{{image}}" alt="{{title}}" class="responsive-img"
-                        style="height:-webkit-fill-available;object-fit:cover;">
+                        style="height:100%;height:-webkit-fill-available;object-fit:cover;">
                     <span class="card-title">
                         {{title}}
                     </span>
@@ -26,7 +26,7 @@
                 {{!-- <h4 class="">{{title}}</h4> --}}
                 <p class="story-text">
                     {{{ stripTags (truncate body 150) }}}
-                    <a href="/stories/Show/{{_id}}" class="purple-text lighten-3">...Read More</a>
+                    <a href="/stories/Show/{{_id}}" class="purple-text lighten-3">Read More</a>
                 </p>
             </div>
             {{!-- votes --}}

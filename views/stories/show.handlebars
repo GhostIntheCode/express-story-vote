@@ -4,7 +4,7 @@
         <div class="card">
             <div class="card-image" style="max-height: 70vh;">
                 <img src="{{story.image}}" alt="{{story.title}}" class="responsive-img"
-                    style="height:-webkit-fill-available;object-fit:cover;">
+                    style="height:-moz-available;height:-webkit-fill-available;object-fit:cover;">
                 <span class="card-title">
                     {{story.title}}
                 </span>
@@ -17,9 +17,15 @@
             </div>
             <div class="card-content">
                 <span class="card-title">{{formatDate story.date 'MMMM Do YYYY'}}</span>
-                <p class="card-action">
+                <div class="row right-align">
+                    <button class="btn" onclick="readAloud()">
+                        <i class="fa fa-volume-up" aria-hidden="true"></i>
+                        read aloud !
+                    </button>
+                </div>
+                <div class="card-action bodyToRead">
                     {{{story.body}}}
-                </p>
+                </div>
             </div>
         </div>
         {{!-- comments card --}}
@@ -28,7 +34,7 @@
             <div class="card-content">
                 <span class="card-title">Comments</span>
                 {{#if user}}
-                <form action="/stories/comment/{{story.id}}" method="post">
+                <form action="/stories/comment/{{story._id}}" method="post">
                     <div class="input-field">
                         <textarea name="commentBody" class="materialize-textarea"></textarea>
                         <label for="commentBody">Add comment</label>
@@ -71,7 +77,7 @@
             </a>
         </div>
         {{!-- Voting card --}}
-        <div class="card-action center-align">
+        <div class="card center-align">
             <a {{#if user}} onclick="sendVote('{{story._id}}',{{story.currentUserDirection}}, 'upVote')" {{else}}
                 href="/auth/login" {{/if}} id="upVote-{{story._id}}"
                 class=" {{#if story.currentUserVotedUp }} purple-text {{else}} black-text {{/if}}"
@@ -92,3 +98,14 @@
     </div>
 </div>
 <script src="/js/voting.js"></script>
+<script>
+    const readAloud = () => {
+        const body = document.querySelector('.bodyToRead').children[0].innerText;
+        const msg = new SpeechSynthesisUtterance(body);
+        if (!window.speechSynthesis.speaking) {
+            window.speechSynthesis.speak(msg);
+        } else {
+            window.speechSynthesis.cancel();
+        }
+    }
+</script>
