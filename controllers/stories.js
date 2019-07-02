@@ -2,6 +2,8 @@
 const Story = require("../models/story");
 const Vote = require("../models/vote");
 
+const {StoriesImagesUrl} = require('../config/storage');
+
 module.exports = {
   addStory: (req, res) => {
     const url = req.protocol + "://" + req.get("host");
@@ -17,7 +19,7 @@ module.exports = {
       newStory.allowComments = false;
     }
     if (req.file) {
-      newStory.image = url + "/stories/images/dev/" + req.file.filename;
+      newStory.image = url + StoriesImagesUrl + req.file.filename;
     }
     new Story(newStory).save().then(story => {
       res.redirect(`/stories/show/${story.id}`);
@@ -36,7 +38,7 @@ module.exports = {
         story.allowComments = false;
       }
       if (req.file) {
-        story.image = url + "/stories/images/dev/" + req.file.filename;
+        story.image = url + StoriesImagesUrl + req.file.filename;
       }  
       story.save().then(story => {
         res.redirect(`/stories/show/${story.id}`);

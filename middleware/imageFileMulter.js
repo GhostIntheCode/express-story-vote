@@ -1,4 +1,5 @@
 const multer = require("multer");
+const { StoriesImagesUrl } = require("../config/storage");
 
 const MIME_TYPES = {
   "image/png": "png",
@@ -10,7 +11,7 @@ const storage = multer.diskStorage({
     const isValid = MIME_TYPES[file.mimetype];
     let error = new Error("invalid mime type");
     isValid ? (error = null) : (error = error);
-    cb(error, "public/stories/images/dev");
+    cb(error, "public" + StoriesImagesUrl);
   },
   filename: function(req, file, cb) {
     const name =
@@ -23,8 +24,8 @@ const storage = multer.diskStorage({
       "-" +
       Date.now();
     const ext = MIME_TYPES[file.mimetype];
-    cb(null, name + '.' + ext);
+    cb(null, name + "." + ext);
   }
 });
 
-module.exports = multer({storage: storage}).single('image');
+module.exports = multer({ storage: storage }).single("image");
