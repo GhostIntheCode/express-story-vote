@@ -1,7 +1,8 @@
 {
-  "name": "mongodb.tester",
+  "name": "Reddit-voting",
   "version": "1.0.0",
-  "description": "",
+  "description": 
+  "after following master brad @traversyMedia,i decided to add to the storybook application a reddit voting system",
   "main": "app.js",
   "dependencies": {
     "bcryptjs": "^2.4.3",

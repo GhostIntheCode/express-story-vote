@@ -1,5 +1,8 @@
 # Javascript Express app 
-* image uploading and /API option
-* passport jwt authentication FOR API Clients,
+after following master brad @traversyMedia,
+i decided to add to the storybook application a reddit voting system
 ### user authentication 
 * Passport Jwt 
+### what i learned 
+* data modling 
+* passport Jwt
